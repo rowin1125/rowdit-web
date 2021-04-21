@@ -1,33 +1,32 @@
-import router from "next/router";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { Formik, Form } from "formik";
 import React, { useState } from "react";
 import { withUrqlClient } from "next-urql";
 import { Box, Button, Flex, Link } from "@chakra-ui/react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 
 import Wrapper from "../../components/Wrapper";
 import { toErrorMap } from "../../utils/toErrorMap";
 import InputField from "../../components/InputField";
 import { useChangePasswordMutation } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
+import Layout from "../../components/Layout";
 
-interface ChangePasswordProps {
-  token: string;
-}
-
-const ChangePassword: NextPage<any> = ({ token }: ChangePasswordProps) => {
+const ChangePassword: NextPage = () => {
   const [, changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
+  const router = useRouter();
 
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ newPassword: "" }}
         onSubmit={async (values, { setErrors }) => {
+          const token = router.query.token;
           const response = await changePassword({
             newPassword: values.newPassword,
-            token,
+            token: typeof token === "string" ? token : "",
           });
           if (response.data?.changePassword.errors) {
             const errorMap = toErrorMap(response.data.changePassword.errors);
@@ -70,16 +69,8 @@ const ChangePassword: NextPage<any> = ({ token }: ChangePasswordProps) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  return {
-    props: {
-      token: query.token as string,
-    },
-  };
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: false })(ChangePassword);

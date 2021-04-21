@@ -15,12 +15,12 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   } else if (!data?.me) {
     body = (
       <>
-        <NextLink href="login">
+        <NextLink href="/login">
           <Link color="white" mr="4">
             Login
           </Link>
         </NextLink>
-        <NextLink href="register">
+        <NextLink href="/register">
           <Link color="white">Register</Link>
         </NextLink>
       </>
