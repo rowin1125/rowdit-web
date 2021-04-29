@@ -6,7 +6,6 @@ import { withUrqlClient } from "next-urql";
 import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import { NextPage } from "next";
 
-import Wrapper from "../../components/Wrapper";
 import { toErrorMap } from "../../utils/toErrorMap";
 import InputField from "../../components/InputField";
 import { useChangePasswordMutation } from "../../generated/graphql";
