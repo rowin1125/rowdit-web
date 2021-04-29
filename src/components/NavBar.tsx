@@ -1,13 +1,12 @@
-import { Box, Flex, Link } from "@chakra-ui/layout";
+import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { Button } from "@chakra-ui/button";
-import { isServer } from "../utils/isServer";
 
 interface NavBarProps {}
 const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ data, fetching }] = useMeQuery({ pause: isServer() });
+  const [{ data, fetching }] = useMeQuery();
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   let body = null;
 
@@ -27,7 +26,14 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   } else {
     body = (
-      <Flex>
+      <Flex alignItems="center">
+        {/* <Flex justifyContent="flex-end" mb={4}> */}
+        <NextLink href="/create-post" passHref>
+          <Button as={Link} variant="solid" colorScheme="green" mr={4}>
+            Create Post
+          </Button>
+        </NextLink>
+        {/* </Flex> */}
         <Box>{data.me.username}</Box>
         <Button
           isLoading={logoutFetching}
@@ -43,8 +49,24 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex bg="tan" p={4}>
-      <Box ml={"auto"}>{body}</Box>
+    <Flex
+      bg="tan"
+      position="sticky"
+      top={0}
+      p={4}
+      alignItems="center"
+      zIndex={1}
+    >
+      <Flex flex={1} margin="auto" maxW={800}>
+        <Heading>
+          <NextLink href="/">
+            <Link>RowDit</Link>
+          </NextLink>
+        </Heading>
+        <Flex alignItems="center" ml="auto">
+          {body}
+        </Flex>
+      </Flex>
     </Flex>
   );
 };

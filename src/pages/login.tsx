@@ -11,6 +11,7 @@ import InputField from "../components/InputField";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useLoginMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import Layout from "../components/Layout";
 
 interface LoginProps {}
 
@@ -18,7 +19,7 @@ const Login: React.FC<LoginProps> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -61,7 +62,7 @@ const Login: React.FC<LoginProps> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 

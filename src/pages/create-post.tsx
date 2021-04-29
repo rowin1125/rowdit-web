@@ -21,10 +21,10 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
       <Formik
         initialValues={{ title: "", text: "" }}
         onSubmit={async (values) => {
-          const { error } = await createPost({ input: values });
+          const { error, data } = await createPost({ input: values });
 
           if (!error) {
-            router.push("/");
+            router.push(`/post/${data?.createPost.id}`);
           }
         }}
       >

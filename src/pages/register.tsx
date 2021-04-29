@@ -12,6 +12,7 @@ import InputField from "../components/InputField";
 import { useRegisterMutation } from "../generated/graphql";
 
 import { createUrqlClient } from "../utils/createUrqlClient";
+import Layout from "../components/Layout";
 
 interface RegisterProps {}
 
@@ -19,7 +20,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
   const router = useRouter();
   const [, register] = useRegisterMutation();
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -56,7 +57,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 
