@@ -18,6 +18,7 @@ import EditOrDeletePost from "../components/EditOrDeletePost";
 import { withApollo } from "../../lib/withApollo";
 
 const Index = () => {
+  // TODO: make ssr
   const { data, error, loading, fetchMore, variables } = usePostsQuery({
     variables: {
       limit: 5,
