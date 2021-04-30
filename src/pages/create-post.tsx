@@ -1,30 +1,35 @@
 import React from "react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { withUrqlClient } from "next-urql";
 import { Box, Button } from "@chakra-ui/react";
 
 import Layout from "../components/Layout";
 import { useIsAuth } from "../hooks/useIsAuth";
 import InputField from "../components/InputField";
 import { useCreatePostMutation } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
+import { withApollo } from "../../lib/withApollo";
 
 interface CreatePostProps {}
 
 const CreatePost: React.FC<CreatePostProps> = ({}) => {
   useIsAuth();
   const router = useRouter();
-  const [, createPost] = useCreatePostMutation();
+  const [createPost] = useCreatePostMutation();
   return (
     <Layout variant="small">
       <Formik
         initialValues={{ title: "", text: "" }}
         onSubmit={async (values) => {
-          const { error, data } = await createPost({ input: values });
+          const { data, errors } = await createPost({
+            variables: { input: values },
+            update: (cache) => {
+              cache.evict({ fieldName: "posts:{}" });
+            },
+          });
 
-          if (!error) {
-            router.push(`/post/${data?.createPost.id}`);
+          if (!errors) {
+            router.push(`/`);
+            // router.push(`/post/${data?.createPost.id}`);
           }
         }}
       >
@@ -55,4 +60,4 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(CreatePost);
+export default withApollo({ ssr: false })(CreatePost);

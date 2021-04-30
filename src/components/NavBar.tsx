@@ -1,16 +1,18 @@
-import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import React from "react";
 import NextLink from "next/link";
-import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { Button } from "@chakra-ui/button";
+import { useApolloClient } from "@apollo/client";
+import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
+
+import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
 interface NavBarProps {}
 const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ data, fetching }] = useMeQuery();
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+  const { data, loading } = useMeQuery();
+  const apolloClient = useApolloClient();
+  const [logout, { loading: logoutLoading }] = useLogoutMutation();
   let body = null;
-
-  if (fetching) {
+  if (loading) {
   } else if (!data?.me) {
     body = (
       <>
@@ -27,17 +29,18 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   } else {
     body = (
       <Flex alignItems="center">
-        {/* <Flex justifyContent="flex-end" mb={4}> */}
         <NextLink href="/create-post" passHref>
           <Button as={Link} variant="solid" colorScheme="green" mr={4}>
             Create Post
           </Button>
         </NextLink>
-        {/* </Flex> */}
         <Box>{data.me.username}</Box>
         <Button
-          isLoading={logoutFetching}
-          onClick={() => logout()}
+          isLoading={logoutLoading}
+          onClick={async () => {
+            logout();
+            await apolloClient.resetStore();
+          }}
           ml="4"
           variant="link"
           type="button"

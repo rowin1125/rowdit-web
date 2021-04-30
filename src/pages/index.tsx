@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
-import { withUrqlClient } from "next-urql";
 import {
   Box,
   Button,
@@ -13,21 +12,21 @@ import {
 
 import Layout from "../components/Layout";
 import { usePostsQuery } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 import UpdootSection from "../components/UpdootSection";
 
 import EditOrDeletePost from "../components/EditOrDeletePost";
+import { withApollo } from "../../lib/withApollo";
 
 const Index = () => {
-  const [variables, setVariables] = useState({
-    limit: 5,
-    cursor: null as null | string,
-  });
-  const [{ data, error, fetching }] = usePostsQuery({
-    variables,
+  const { data, error, loading, fetchMore, variables } = usePostsQuery({
+    variables: {
+      limit: 5,
+      cursor: null as null | string,
+    },
+    notifyOnNetworkStatusChange: true,
   });
 
-  if (!fetching && !data) {
+  if (!loading && !data) {
     return (
       <Layout>
         <div>Query failed</div>
@@ -38,7 +37,7 @@ const Index = () => {
 
   return (
     <Layout>
-      {!data && fetching ? (
+      {!data && loading ? (
         <div>Loading....</div>
       ) : (
         <Stack spacing={8}>
@@ -75,12 +74,15 @@ const Index = () => {
         <Flex justifyContent="center" mt={8}>
           <Button
             onClick={() =>
-              setVariables({
-                limit: variables.limit,
-                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+              fetchMore({
+                variables: {
+                  limit: variables?.limit,
+                  cursor:
+                    data.posts.posts[data.posts.posts.length - 1].createdAt,
+                },
               })
             }
-            isLoading={fetching}
+            isLoading={loading}
             as="a"
             variant="solid"
             colorScheme="blue"
@@ -93,4 +95,4 @@ const Index = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
+export default withApollo({ ssr: true })(Index);

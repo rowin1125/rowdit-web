@@ -81,7 +81,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
     url: process.env.NEXT_PUBLIC_API_URL as string,
     fetchOptions: {
       credentials: "include" as const,
-      headers: cookie ? { cookie } : undefined,
+      headers: cookie ? { cookie } : "",
     },
     exchanges: [
       dedupExchange,

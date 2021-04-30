@@ -12,8 +12,8 @@ const EditOrDeletePost: React.FC<EditOrDeletePostProps> = ({
   id,
   creatorId,
 }) => {
-  const [, deletePost] = useDeletePostMutation();
-  const [{ data: me }] = useMeQuery();
+  const [deletePost] = useDeletePostMutation();
+  const { data: me } = useMeQuery();
 
   return (
     <>
@@ -34,7 +34,14 @@ const EditOrDeletePost: React.FC<EditOrDeletePostProps> = ({
             color="white"
             aria-label="Delete post"
             icon={<DeleteIcon />}
-            onClick={() => deletePost({ id })}
+            onClick={() =>
+              deletePost({
+                variables: { id },
+                update: (cache) => {
+                  cache.evict({ id: "Post:" + id });
+                },
+              })
+            }
           />
         </Box>
       )}
