@@ -63,7 +63,7 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
       <Flex flex={1} margin="auto" maxW={800}>
         <Heading>
           <NextLink href="/">
-            <Link>RowDit</Link>
+            <Link>Row</Link>
           </NextLink>
         </Heading>
         <Flex alignItems="center" ml="auto">

@@ -4,15 +4,15 @@ import { NextPageContext } from "next";
 import { PaginatedPosts } from "../src/generated/graphql";
 
 const createClient = (ctx?: NextPageContext) => {
+  const headers: any = typeof window === "undefined" ? ctx?.req?.headers : {};
   return new ApolloClient({
     uri: process.env.NEXT_PUBLIC_API_URL as string,
     credentials: "include",
-    headers: {
-      cookie:
-        (typeof window === "undefined"
-          ? ctx?.req?.headers.cookie
-          : undefined) || "",
-    },
+    headers: { ...headers },
+    // cookie:
+    //   (typeof window === "undefined"
+    //     ? ctx?.req?.headers.cookie
+    //     : undefined) || "",
     cache: new InMemoryCache({
       typePolicies: {
         Query: {
