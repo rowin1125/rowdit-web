@@ -17,7 +17,7 @@ import UpdootSection from "../components/UpdootSection";
 import EditOrDeletePost from "../components/EditOrDeletePost";
 import { withApollo } from "../../lib/withApollo";
 import { initializeApollo, addApolloState } from "../../lib/apolloClient";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 
 const Index = () => {
   // TODO: make ssr
@@ -98,23 +98,24 @@ const Index = () => {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const apolloClient = initializeApollo(ctx);
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const apolloClient = initializeApollo(ctx);
 
-//   const data = await apolloClient.query({
-//     query: PostsDocument,
-//     variables: {
-//       limit: 5,
-//       cursor: null as null | string,
-//     },
-//   });
+  await apolloClient.query({
+    query: PostsDocument,
+    variables: {
+      limit: 5,
+      cursor: null as null | string,
+    },
+  });
 
-//   return addApolloState(apolloClient, {
-//     props: {
-//       data,
-//     },
-//   });
-// };
+  return addApolloState(apolloClient, {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
+    revalidate: 1,
+  });
+};
 
-// export default Index;
-export default withApollo({ ssr: true })(Index);
+export default Index;
+// export default withApollo({ ssr: true })(Index);
