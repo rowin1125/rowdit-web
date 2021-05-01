@@ -10,17 +10,14 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 let apolloClient: any;
 
 function createApolloClient(ctx?: NextPageContext) {
+  const headers: any = typeof window === "undefined" ? ctx?.req?.headers : {};
+
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
       uri: process.env.NEXT_PUBLIC_API_URL as string, // Server URL (must be absolute)
       credentials: "include", // Additional fetch() options like `credentials` or `headers`
-      headers: {
-        cookie:
-          (typeof window === "undefined"
-            ? ctx?.req?.headers.cookie
-            : undefined) || "",
-      },
+      headers: { ...headers },
     }),
     cache: new InMemoryCache({
       typePolicies: {
@@ -45,7 +42,7 @@ function createApolloClient(ctx?: NextPageContext) {
   });
 }
 
-export function initializeApollo(initialState: any = null, ctx: any) {
+export function initializeApollo(ctx: any, initialState: any = null) {
   const _apolloClient = apolloClient ?? createApolloClient(ctx);
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
@@ -86,6 +83,6 @@ export function addApolloState(client: any, pageProps: any) {
 
 export function useApollo(pageProps: any, ctx = null) {
   const state = pageProps[APOLLO_STATE_PROP_NAME];
-  const store = useMemo(() => initializeApollo(state, ctx), [state]);
+  const store = useMemo(() => initializeApollo(ctx, state), [state]);
   return store;
 }

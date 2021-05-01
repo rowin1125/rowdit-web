@@ -8,15 +8,17 @@ import type { AppProps } from "next/app";
 function MyApp({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps);
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <ColorModeProvider
-        options={{
-          useSystemColorMode: true,
-        }}
-      >
-        <Component {...pageProps} />
-      </ColorModeProvider>
-    </ChakraProvider>
+    <ApolloProvider client={apolloClient}>
+      <ChakraProvider resetCSS theme={theme}>
+        <ColorModeProvider
+          options={{
+            useSystemColorMode: true,
+          }}
+        >
+          <Component {...pageProps} />
+        </ColorModeProvider>
+      </ChakraProvider>
+    </ApolloProvider>
   );
 }
 

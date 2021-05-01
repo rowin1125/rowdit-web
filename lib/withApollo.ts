@@ -6,6 +6,7 @@ import { PaginatedPosts } from "../src/generated/graphql";
 const createClient = (ctx?: NextPageContext) => {
   const headers: any = typeof window === "undefined" ? ctx?.req?.headers : {};
   return new ApolloClient({
+    ssrMode: typeof window === "undefined",
     uri: process.env.NEXT_PUBLIC_API_URL as string,
     credentials: "include",
     headers: { ...headers },
